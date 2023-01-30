@@ -59,11 +59,17 @@ void fileScroller(char *nomeCartella[], int numeroFile) {
 void hashEncoder(char *nomeFile[], char passphrase[]) {
     char testoChiaro[30];
     int index = 0;
-    printf(nomeFile);
+    char cwd[PATH_MAX];
 
-    if(chdir("obj")==0){
+    if (chdir("obj") == 0) {
 
-        printf(":%s",passphrase);
+        if (getcwd(cwd, sizeof(cwd)) != NULL) {
+            printf("Current working dir: %s\n", cwd);
+        } else {
+            perror("getcwd() error");
+        }
+        printf("File %d:%s-pw:%s \n", index + 1, nomeFile,passphrase);
+/*
         FILE *fileIDread = fopen(nomeFile, "r");
         if (fileIDread != NULL) {
 
@@ -106,17 +112,17 @@ void hashEncoder(char *nomeFile[], char passphrase[]) {
                 perror("Il file non si apre in scrittura /n");
                 fclose(fileIDwrite);
             }
-        */
-        } else {
-            perror("Il file non si apre in lettura vecio \n");
-            fclose(fileIDread);
-        }
+
+    } else {
+        perror("Il file non si apre in lettura vecio \n");
+        fclose(fileIDread);
     }
-    else{
+    */
+        closedir("obj");
+    } else {
         perror("Cartella obiettivo non aperta!!");
     }
 }
-
 
 int main() {
 
@@ -143,11 +149,9 @@ int main() {
     sleep(2.0);
 
     for (int i = 0; i < numeroFile; i++) {
-        hashEncoder(&fileArray[i], passfrase);
+        hashEncoder(fileArray[i], passfrase);
         sleep(1.0);
-
     }
-
     return 0;
 }
 
