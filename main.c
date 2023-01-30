@@ -25,67 +25,6 @@ int fileCounter(char nomeCartella[]) {
     return numeroFile;
 }
 
-void hashEncoder(char nomeFile[], char passphrase[]) {
-    char testoChiaro[30];
-    int index = 0;
-    char *hash;
-
-    FILE *fileIDread;
-    FILE *fileIDwrite;
-
-
-    fileIDread = fopen(nomeFile, "r");
-    if (fileIDread != NULL) {
-
-        printf("File %s aperto per la lettura \n", nomeFile);
-        fscanf(fileIDread, "%c", &testoChiaro[index]);
-        while (feof(fileIDread) != 1) {
-            index++;
-            fscanf(fileIDread, "%c", &testoChiaro[index]);
-        }
-        fclose(fileIDread);
-
-        index--;
-
-        char testoCriptato[index + 3];
-        testoCriptato[0] = '$';
-        testoCriptato[1] = '5';
-        testoCriptato[2] = '$';
-        for (int i = 0; i <index; i++) {
-            testoCriptato[i+3] = testoChiaro[i];
-        }
-        testoCriptato[index+3] = '\0';
-
-        printf("Testo normale: %s \n", testoChiaro);
-        printf("Testo inquadrato: %s \n", testoCriptato);
-        //hash = crypt(passphrase,testoCriptato);
-        //printf("Il file %s è stato hashato in: %s \n",nomeFile,hash);
-        //printf("Testo croppato: %s \n", testoCriptato);
-        //printf("Lunghezza della parola: %d \n", index);
-
-        /*
-        fileIDwrite = fopen(nomeFile, "w");
-        if (fileIDwrite != NULL) {
-            //printf("File %s aperto per la scrittura \n", nomeFile);
-            for (int i = 0; i < index; i++) {
-                fprintf(fileIDread, "%c", testoCriptato[i]);
-            }
-            fclose(fileIDwrite);
-
-
-
-        } else {
-            perror("Il file non si apre in scrittura /n");
-            fclose(fileIDwrite);
-        }
-    */
-    } else {
-        perror("Il file non si apre in lettura vecio /n");
-        fclose(fileIDread);
-    }
-}
-
-
 void fileScroller(char *nomeCartella[], int numeroFile) {
 
     //questa funzione scorrendo tra i file già contati di una cartella e associa il nome di ognuno di essi
@@ -97,21 +36,84 @@ void fileScroller(char *nomeCartella[], int numeroFile) {
     DIR *dp;
     struct dirent *ep;
 
-    dp = opendir(".");
+    dp = opendir("obj");
     if (dp != NULL) {
         while (ep = readdir(dp)) {
 
-            if (indiceScroll == 0 || indiceScroll > numeroFile) {
+            if (indiceScroll == 2 || indiceScroll == 3) {
                 indiceScroll++;
             } else {
+                printf("File: %s \n", ep->d_name);
                 nomeCartella[indiceArray] = ep->d_name;
                 indiceScroll++;
                 indiceArray++;
             }
+
         }
         closedir(dp);
     } else {
         perror("Non ho potuto aprire la cartella");
+    }
+}
+
+void hashEncoder(char *nomeFile[], char passphrase[]) {
+    char testoChiaro[30];
+    int index = 0;
+    printf(nomeFile);
+
+    if(chdir("obj")==0){
+
+        printf(":%s",passphrase);
+        FILE *fileIDread = fopen(nomeFile, "r");
+        if (fileIDread != NULL) {
+
+            printf("File %s aperto per la lettura \n", nomeFile);
+            fscanf(fileIDread, "%c", &testoChiaro[index]);
+            while (feof(fileIDread) != 1) {
+                index++;
+                fscanf(fileIDread, "%c", &testoChiaro[index]);
+            }
+            fclose(fileIDread);
+
+            index--;
+
+            char testoCriptato[index + 3];
+            testoCriptato[0] = '$';
+            testoCriptato[1] = '5';
+            testoCriptato[2] = '$';
+            for (int i = 0; i < index; i++) {
+                testoCriptato[i + 3] = testoChiaro[i];
+            }
+            testoCriptato[index + 3] = '\0';
+
+            printf("Testo normale: %s \n", testoChiaro);
+            printf("Testo inquadrato: %s \n", testoCriptato);
+            //char *hash = crypt(passphrase,testoCriptato);
+            //printf("Il file %s è stato hashato in: %s \n",nomeFile,hash);
+            //printf("Testo croppato: %s \n", testoCriptato);
+            //printf("Lunghezza della parola: %d \n", index);
+
+            /*
+            FILE *fileIDwrite = fopen(nomeFile, "w");
+            if (fileIDwrite != NULL) {
+                //printf("File %s aperto per la scrittura \n", nomeFile);
+                for (int i = 0; i < index; i++) {
+                    fprintf(fileIDread, "%c", testoCriptato[i]);
+                }
+                fclose(fileIDwrite);
+
+            } else {
+                perror("Il file non si apre in scrittura /n");
+                fclose(fileIDwrite);
+            }
+        */
+        } else {
+            perror("Il file non si apre in lettura vecio \n");
+            fclose(fileIDread);
+        }
+    }
+    else{
+        perror("Cartella obiettivo non aperta!!");
     }
 }
 
@@ -120,7 +122,7 @@ int main() {
 
     srand(time(NULL));
     int numeroFile;
-    char passfrase[]={"pucci"};
+    char passfrase[] = {"pucci"};
 
     printf("Sistema di criptazione multipla \n");
 
@@ -129,23 +131,21 @@ int main() {
     printf("File da criptare: %d \n", numeroFile);
 
     char *fileArray[numeroFile];
-    if (chdir("obj") == 0) {
 
-        fileScroller(fileArray, numeroFile);
+    fileScroller(fileArray, numeroFile);
 
-        for(int i=0;i<numeroFile;i++){
-            printf("File %d denominato: %s \n",i+1,fileArray[i]);
-        }
-        printf("--------------------------------- \n");
-        printf("Proseguo con la criptazione \n");
+    for (int i = 0; i < numeroFile; i++) {
+        printf("File %d denominato: %s \n", i + 1, fileArray[i]);
+    }
+    printf("--------------------------------- \n");
+    printf("Proseguo con la criptazione \n");
 
-        sleep(3.0);
-        for (int i = 0; i < numeroFile; i++) {
-            hashEncoder(fileArray[i],passfrase);
-            sleep(1.0);
-        }
-    } else {
-        perror("Cartella non aperta!");
+    sleep(2.0);
+
+    for (int i = 0; i < numeroFile; i++) {
+        hashEncoder(&fileArray[i], passfrase);
+        sleep(1.0);
+
     }
 
     return 0;

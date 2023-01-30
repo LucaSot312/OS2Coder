@@ -12,7 +12,7 @@
 int fileCounter(char *);
 
 
-void hashEncoder(char *, char *);
+void hashEncoder(char **, char *);
 
 
 void fileScroller(char **, int);
