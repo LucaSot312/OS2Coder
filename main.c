@@ -25,7 +25,7 @@ int fileCounter(char nomeCartella[]) {
     return numeroFile;
 }
 
-void fileScroller(char *nomeCartella[], int numeroFile) {
+void fileScroller(char *nomeCartella[]) {
 
     //questa funzione scorrendo tra i file già contati di una cartella e associa il nome di ognuno di essi
     //ad un puntatore di un array di puntatori in modo così da poter richiamare quando si vuole il file tramite il suo
@@ -56,18 +56,12 @@ void fileScroller(char *nomeCartella[], int numeroFile) {
     }
 }
 
-void hashEncoder(char *nomeFile[], char passphrase[]) {
+void hashEncoder(char nomeFile[], char passphrase[]) {
     char testoChiaro[30];
     int index = 0;
-    char cwd[PATH_MAX];
 
     if (chdir("obj") == 0) {
 
-        if (getcwd(cwd, sizeof(cwd)) != NULL) {
-            printf("Current working dir: %s\n", cwd);
-        } else {
-            perror("getcwd() error");
-        }
         printf("File %d:%s-pw:%s \n", index + 1, nomeFile,passphrase);
 /*
         FILE *fileIDread = fopen(nomeFile, "r");
@@ -138,7 +132,7 @@ int main() {
 
     char *fileArray[numeroFile];
 
-    fileScroller(fileArray, numeroFile);
+    fileScroller(fileArray);
 
     for (int i = 0; i < numeroFile; i++) {
         printf("File %d denominato: %s \n", i + 1, fileArray[i]);
