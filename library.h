@@ -7,12 +7,13 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <time.h>
+#include <string.h>
 #include "crypt.h"
 
 int fileCounter(char *);
 
 
-void hashEncoder(char *, char *);
+void hashEncoder(char *);
 
 
 void fileScroller(char **);

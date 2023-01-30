@@ -56,18 +56,19 @@ void fileScroller(char *nomeCartella[]) {
     }
 }
 
-void hashEncoder(char nomeFile[], char passphrase[]) {
+void hashEncoder(char *nomeFile) {
+
     char testoChiaro[30];
     int index = 0;
+    const char passphrase[] = {"pucci"};
 
     if (chdir("obj") == 0) {
 
-        printf("File %d:%s-pw:%s \n", index + 1, nomeFile,passphrase);
-/*
+        printf("File: %s \n", nomeFile);
+
         FILE *fileIDread = fopen(nomeFile, "r");
         if (fileIDread != NULL) {
 
-            printf("File %s aperto per la lettura \n", nomeFile);
             fscanf(fileIDread, "%c", &testoChiaro[index]);
             while (feof(fileIDread) != 1) {
                 index++;
@@ -93,7 +94,7 @@ void hashEncoder(char nomeFile[], char passphrase[]) {
             //printf("Testo croppato: %s \n", testoCriptato);
             //printf("Lunghezza della parola: %d \n", index);
 
-            /*
+/*
             FILE *fileIDwrite = fopen(nomeFile, "w");
             if (fileIDwrite != NULL) {
                 //printf("File %s aperto per la scrittura \n", nomeFile);
@@ -106,28 +107,30 @@ void hashEncoder(char nomeFile[], char passphrase[]) {
                 perror("Il file non si apre in scrittura /n");
                 fclose(fileIDwrite);
             }
+*/
+        } else {
+            perror("Il file non si apre in lettura vecio \n");
+            fclose(fileIDread);
+        }
 
-    } else {
-        perror("Il file non si apre in lettura vecio \n");
-        fclose(fileIDread);
-    }
-    */
-        closedir("obj");
+        chdir("..");
     } else {
         perror("Cartella obiettivo non aperta!!");
     }
+
+    printf("--------------------------------- \n");
 }
 
 int main() {
 
     srand(time(NULL));
     int numeroFile;
-    char passfrase[] = {"pucci"};
 
     printf("Sistema di criptazione multipla \n");
-
     printf("Sto calcolando il numero di file nella cartella obiettivo \n");
+
     numeroFile = fileCounter("obj");
+
     printf("File da criptare: %d \n", numeroFile);
 
     char *fileArray[numeroFile];
@@ -143,7 +146,7 @@ int main() {
     sleep(2.0);
 
     for (int i = 0; i < numeroFile; i++) {
-        hashEncoder(fileArray[i], passfrase);
+        hashEncoder(fileArray[i]);
         sleep(1.0);
     }
     return 0;
