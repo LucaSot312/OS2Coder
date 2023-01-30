@@ -1,0 +1,3 @@
+/home/lucaos/CLionProjects/OS2Coder/cmake-build-debug/CMakeFiles/OS2Coder.dir
+/home/lucaos/CLionProjects/OS2Coder/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/lucaos/CLionProjects/OS2Coder/cmake-build-debug/CMakeFiles/rebuild_cache.dir
