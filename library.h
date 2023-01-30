@@ -13,9 +13,11 @@
 int fileCounter(void);
 
 
-void hashEncoder(char[]);
+void hashEncoder(char*);
 
 
-void fileScroller(char **);
+void fileScroller(void);
+
+void fileLister(char**);
 
 #endif //OS2CODER_LIBRARY_H

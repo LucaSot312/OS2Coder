@@ -1,10 +1,5 @@
 #include "library.h"
 
-typedef struct lista {
-    char nome[10];
-    int *next;
-};
-
 int fileCounter() {
 
     //funzione che si occupa, dato in input il nome di una cartella, di esplorarla e restituire il numero di file
@@ -29,13 +24,12 @@ int fileCounter() {
     return numeroFile;
 }
 
-void fileScroller(char *nomeCartella[]) {
+void fileLister(char *nomeArray[]) {
 
     //questa funzione scorrendo tra i file già contati di una cartella e associa il nome di ognuno di essi
     //ad un puntatore di un array di puntatori in modo così da poter richiamare quando si vuole il file tramite il suo
     //nome in ognuna altra funzione del programma.
 
-    int indiceScroll = 0;
     int indiceArray = 0;
     DIR *dp;
     struct dirent *ep;
@@ -43,9 +37,34 @@ void fileScroller(char *nomeCartella[]) {
     dp = opendir(".");
     if (dp != NULL) {
         while ((ep = readdir(dp)) != NULL) {
-            if (ep->d_type == DT_REG && strcmp(ep->d_name,".")!=0 && strcmp(ep->d_name,"..")!=0) {
-                nomeCartella[indiceArray] = ep->d_name;
+            if (ep->d_type == DT_REG && strcmp(ep->d_name, ".") != 0 && strcmp(ep->d_name, "..") != 0) {
+                nomeArray[indiceArray] = ep->d_name;
                 indiceArray++;
+            }
+        }
+        closedir(dp);
+    } else {
+        perror("Non ho potuto aprire la cartella");
+    }
+}
+
+void fileScroller(void) {
+
+    //questa funzione scorrendo tra i file già contati di una cartella e associa il nome di ognuno di essi
+    //ad un puntatore di un array di puntatori in modo così da poter richiamare quando si vuole il file tramite il suo
+    //nome in ognuna altra funzione del programma.
+
+    int indiceArray = 0;
+    DIR *dp;
+    struct dirent *ep;
+
+    dp = opendir(".");
+    if (dp != NULL) {
+        while ((ep = readdir(dp)) != NULL) {
+            if (ep->d_type == DT_REG && strcmp(ep->d_name, ".") != 0 && strcmp(ep->d_name, "..") != 0) {
+                hashEncoder(ep->d_name);
+                indiceArray++;
+                sleep(2.0);
             }
         }
         closedir(dp);
@@ -62,9 +81,11 @@ void hashEncoder(char nomeFile[]) {
     FILE *fileIDread;
     FILE *fileIDwrite;
 
+
     fileIDread = fopen(nomeFile, "r");
     if (fileIDread) {
 
+        printf("File: %s \n", nomeFile);
         printf("Puntatore buono \n");
         fscanf(fileIDread, "%c", &testoChiaro[index]);
         while (!feof(fileIDread)) {
@@ -72,50 +93,44 @@ void hashEncoder(char nomeFile[]) {
             fscanf(fileIDread, "%c", &testoChiaro[index]);
         }
         fclose(fileIDread);
+        index--;
+
+        char testoCroppato[index + 3];
+        testoCroppato[0] = '$';
+        testoCroppato[1] = '5';
+        testoCroppato[2] = '$';
+        for (int i = 0; i < index; i++) {
+            testoCroppato[i + 3] = testoChiaro[i];
+        }
+        testoCroppato[index + 3] = '\0';
+        printf("Testo di %d caratteri: %s \n", index, testoCroppato);
+        char *hash = crypt(passphrase, testoCroppato);
+        //testoCroppato[index + 3] = '-';
+        printf("Testo hashato: %s \n", hash);
+
+
+        fileIDwrite = fopen(nomeFile, "w");
+        if (fileIDwrite != NULL) {
+            for (int i = 0; hash[i] != NULL; i++) {
+                fprintf(fileIDread, "%c", hash[i]);
+            }
+        } else {
+            perror("Il file non si apre in scrittura /n");
+        }
+        fclose(fileIDwrite);
 
     } else {
         perror("Puntatore nullo \n");
-
     }
     /*
-    if (fileIDread != NULL) {
 
-        fscanf(fileIDread, "%c", &testoChiaro[index]);
-        while (!feof(fileIDread)) {
-            index++;
-            fscanf(fileIDread, "%c", &testoChiaro[index]);
-        }
-        fclose(fileIDread);
-
-        index--;
-
-        char testoCriptato[index + 3];
-        testoCriptato[0] = '$';
-        testoCriptato[1] = '5';
-        testoCriptato[2] = '$';
-        for (int i = 0; i < index; i++) {
-            testoCriptato[i + 3] = testoChiaro[i];
-        }
-        testoCriptato[index + 3] = '\0';
-
-        printf("Testo normale: %s \n", testoChiaro);
-        printf("Testo inquadrato: %s \n", testoCriptato);
-        //char *hash = crypt(passphrase,testoCriptato);
-        //printf("Il file %s è stato hashato in: %s \n",nomeFile,hash);
+        //
+        //
         //printf("Testo croppato: %s \n", testoCriptato);
         //printf("Lunghezza della parola: %d \n", index);
 
 
-        FfileIDwrite = fopen(nomeFile, "w");
-        if (fileIDwrite != NULL) {
-            //printf("File %s aperto per la scrittura \n", nomeFile);
-            for (int i = 0; i < index; i++) {
-                fprintf(fileIDread, "%c", testoCriptato[i]);
-            }
-        } else {
-            perror("Il file non si apre in scrittura /n");
-            fclose(fileIDwrite);
-        }
+
 
     fclose(fileIDwrite);
 } else {
@@ -140,28 +155,14 @@ int main() {
         printf("File da criptare: %d \n", numeroFile);
 
         char *fileArray[numeroFile];
-
-
-        fileScroller(fileArray);
-
+        fileLister(fileArray);
         for (int i = 0; i < numeroFile; i++) {
             printf("File %d denominato: %s \n", i + 1, fileArray[i]);
         }
         printf("--------------------------------- \n");
-        printf("Proseguo con la criptazione \n");
 
-        sleep(2.0);
+        fileScroller();
 
-
-        for (int i = 0; i < numeroFile; i++) {
-            int entryLeng = sizeof(fileArray[i]);
-            char *entry[entryLeng];
-            memmove(entry, fileArray[i], entryLeng);
-            printf("File:%s \n", entry);
-            hashEncoder(entry);
-            sleep(2.0);
-
-        }
     } else {
         perror("Cartella di lavoro non accessibile \n");
     }
