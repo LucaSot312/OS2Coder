@@ -12,9 +12,9 @@
 
 int fileCounter(void);
 
-
 void hashEncoder(char*);
 
+void fileCreator(void);
 
 void fileScroller(void);
 

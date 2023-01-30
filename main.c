@@ -1,5 +1,27 @@
 #include "library.h"
 
+void fileCreator() {
+
+    char pw[10], social[20];
+
+    printf("Inserisci il nome del servizio: \n");
+    scanf("%s", social);
+    printf("Inserisci il nome del servizio: \n");
+    scanf("%s", pw);
+    printf("File %s with pw: %s \n", social, pw);
+    printf("--------------------------------- \n");
+    FILE *bebo;
+    bebo = fopen(social, "w");
+    if (bebo != NULL) {
+        for (int i = 0; pw[i] != NULL; i++) {
+            fprintf(bebo, "%c", pw[i]);
+        }
+    } else {
+        perror("File non creato");
+    }
+    fclose(bebo);
+}
+
 int fileCounter() {
 
     //funzione che si occupa, dato in input il nome di una cartella, di esplorarla e restituire il numero di file
@@ -122,33 +144,22 @@ void hashEncoder(char nomeFile[]) {
     } else {
         perror("Puntatore nullo \n");
     }
-    /*
 
-        //
-        //
-        //printf("Testo croppato: %s \n", testoCriptato);
-        //printf("Lunghezza della parola: %d \n", index);
-
-
-
-
-    fclose(fileIDwrite);
-} else {
-    perror("Il file non si apre in lettura vecio \n");
-    fclose(fileIDread);
-}
-*/
     printf("--------------------------------- \n");
 }
 
 int main() {
 
-    srand(time(NULL));
     int numeroFile;
 
     if (chdir("obj") == 0) {
         printf("Sistema di criptazione multipla \n");
-        printf("Sto calcolando il numero di file nella cartella obiettivo \n");
+        printf("Inserisca il numero di file che andrà ad inserire: \n");
+        scanf("%d", &numeroFile);
+        for (int i = 0; i < numeroFile; i++) {
+            fileCreator();
+        }
+        sleep(2.0);
 
         numeroFile = fileCounter();
 
