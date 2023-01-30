@@ -10,10 +10,10 @@
 #include <string.h>
 #include "crypt.h"
 
-int fileCounter(char *);
+int fileCounter(void);
 
 
-void hashEncoder(char *);
+void hashEncoder(char[]);
 
 
 void fileScroller(char **);
