@@ -3,14 +3,14 @@
 void fileCreator() {
 
     //Questa prima funzione si occupa, nel caso in cui l'utente voglia aggiugere da terminale dei file alla cartella
-    //obiettivo, di istanziare dei file dati in input nome e contenuto
+    //obiettivo, d'istanziare dei file dati in immissione nome e contenuto
 
     char pw[10], social[20];
     int index=0;
 
     printf("Inserisci il nome del servizio: \n");
     scanf("%s", social);
-    printf("Inserisci il nome del servizio: \n");
+    printf("Inserisci la password del servizio: \n");
     scanf("%s", pw);
     printf("File %s with pw: %s \n", social, pw);
     printf("--------------------------------- \n");
@@ -32,7 +32,8 @@ void fileCreator() {
         //errore generico in caso l'apertura non vada a buon fine
         perror("File non creato");
     }
-
+    //scrivo anche un ultimo carattere dato che la funzione di lettura arriva fino al penultimo carattere
+    fprintf(bebo,"%c",'.');
     fclose(bebo);
 }
 
@@ -75,7 +76,7 @@ int fileCounter() {
 void fileLister(char *nomeArray[]) {
 
     //questa funzione scorrendo tra i file già contati di una cartella e associa il nome di ognuno di essi
-    //ad un puntatore di un array di puntatori in modo così da poter richiamare quando si vuole il file tramite il suo
+    //a un puntatore di un array di puntatori in modo così da poter richiamare quando si vuole il file tramite il suo
     //nome in ognuna altra funzione del programma.
 
     //variabile che contiene l indice di scorrimento nell'array
@@ -180,7 +181,7 @@ void hashEncoder(char nomeFile[]) {
         }
         //chiudo il file una volta finita la lettura
         fclose(fileIDread);
-        printf("Testo in chiaro: %s \n",testoChiaro);
+
         index--;
 
 
